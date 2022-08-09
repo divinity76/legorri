@@ -108,6 +108,10 @@ function copyRecursive(string $source, string $destination, bool $verbose = fals
         copyRecursive($sourcePath, $destinationPath, $verbose);
     }
 }
+function isCygwin(): bool
+{
+    return (PHP_OS === "CYGWIN");
+}
 
 class LegoRRCompiler
 {
@@ -117,9 +121,52 @@ class LegoRRCompiler
     {
         //
     }
-    function compile(): void
+    public function createSetupExe(bool $fast)
     {
-        $build_dir = $this->build_dir =  __DIR__ . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "build_dir";
+        $exe7zSearch = array(
+            "C:\\Program Files\\7-Zip\\7z.exe",
+            "C:\\Program Files (x86)\\7-Zip\\7z.exe",
+            "C:\\Program Files (x86)\\7-Zip\\7z64.exe",
+            "/usr/bin/7z",
+        );
+        $exec7z = null;
+        foreach ($exe7zSearch as $exe7z) {
+            if (file_exists($exe7z)) {
+                $exe7z = $exe7z;
+                break;
+            }
+        }
+        if ($exe7z === null) {
+            throw new \RuntimeException("7-Zip 7z not found");
+        }
+        $build_dir = $this->build_dir;
+        if (isCygwin()) {
+            $exe7z = trim(shell_exec("cygpath --unix " . escapeshellarg($exe7z)));
+            $build_dir = trim(shell_exec("cygpath --windows " . escapeshellarg($build_dir)));
+        }
+        $cmd = array(
+            escapeshellarg($exe7z),
+            "a",
+            // not sure what all these flags means, source: https://superuser.com/a/1449735/519577
+            ($fast ? "-mx=1" : "-t7z -mx=9 -mfb=273 -ms -md=31 -myx=9 -mtm=- -mmt -mmtf -md=1536m -mmf=bt3 -mmc=10000 -mpb=0 -mlc=0"),
+            //"-sfx7z.sfx",
+            "-sfx",
+            "setup.exe",
+            escapeshellarg($build_dir),
+        );
+        $cmd = implode(" ", $cmd);
+        //dd($exe7z, $build_dir, $cmd);
+        echo "Executing: {$cmd}\n";
+        passthru($cmd, $return);
+        if ($return !== 0) {
+            throw new \RuntimeException("7z Failed to create setup.exe! error code: {$return}");
+        }
+    }
+
+    public function compile(): void
+    {
+        chdir(__DIR__ . DIRECTORY_SEPARATOR . "..");
+        $build_dir = $this->build_dir =  __DIR__ . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "legorr";
         echo "clearing build_dir: \"{$build_dir}\"\n";
         unlinkRecursive($build_dir, true);
         if (!mkdir($build_dir, 0777, true)) {
@@ -195,4 +242,7 @@ class LegoRRCompiler
         copyRecursive($mm_cafeteria_dir, $build_dir, true);
     }
 }
-(new LegoRRCompiler())->compile();
+$compiler = (new LegoRRCompiler());
+$compiler->compile();
+$fast = false;
+$compiler->createSetupExe($fast);
