@@ -144,6 +144,7 @@ class LegoRRCompiler
             $exe7z = trim(shell_exec("cygpath --unix " . escapeshellarg($exe7z)));
             $build_dir = trim(shell_exec("cygpath --windows " . escapeshellarg($build_dir)));
         }
+        $setup_exe_name = "legorri_setup_" . date("Y_m_d") . ".exe";
         $cmd = array(
             escapeshellarg($exe7z),
             "a",
@@ -151,7 +152,7 @@ class LegoRRCompiler
             ($fast ? "-mx=1" : "-t7z -mx=9 -mfb=273 -ms -md=31 -myx=9 -mtm=- -mmt -mmtf -md=1536m -mmf=bt3 -mmc=10000 -mpb=0 -mlc=0"),
             //"-sfx7z.sfx",
             "-sfx",
-            "setup.exe",
+            escapeshellarg($setup_exe_name),
             escapeshellarg($build_dir),
         );
         $cmd = implode(" ", $cmd);
