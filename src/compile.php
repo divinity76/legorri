@@ -116,7 +116,7 @@ function isCygwin(): bool
 class LegoRRCompiler
 {
     private $build_dir;
-    private $assert_dir;
+    private $asset_dir;
     function __construct()
     {
         //
@@ -174,7 +174,7 @@ class LegoRRCompiler
             throw new \RuntimeException("Failed to create build_dir: \"{$build_dir}\"");
         }
         $this->build_dir = realpath($build_dir);
-        $this->assert_dir = realpath(__DIR__ . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "assets");
+        $this->asset_dir = realpath(__DIR__ . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "assets");
         assert(!!$this->asset_dir);
         // sigh..
         $this->add_base_game();
@@ -189,35 +189,35 @@ class LegoRRCompiler
     private function add_base_game(): void
     {
         $build_dir = $this->build_dir;
-        $base_game_dir = $this->assert_dir . DIRECTORY_SEPARATOR . "base_game_with_drm";
+        $base_game_dir = $this->asset_dir . DIRECTORY_SEPARATOR . "base_game_with_drm";
         echo "copying base_game: \"{$base_game_dir}\" to \"{$build_dir}\"\n";
         copyRecursive($base_game_dir, $build_dir, true);
     }
     private function add_d3drm(): void
     {
         $build_dir = $this->build_dir;
-        $d3drm_dir = $this->assert_dir . DIRECTORY_SEPARATOR . "d3drm";
+        $d3drm_dir = $this->asset_dir . DIRECTORY_SEPARATOR . "d3drm";
         echo "adding d3drm: \"{$d3drm_dir}\" to \"{$build_dir}\"\n";
         copyRecursive($d3drm_dir, $build_dir, true);
     }
     private function remove_drm(): void
     {
         $build_dir = $this->build_dir;
-        $drm_free_dir = $this->assert_dir . DIRECTORY_SEPARATOR . "LRR_Masterpiece_Editon_Executable_no_DRM";
+        $drm_free_dir = $this->asset_dir . DIRECTORY_SEPARATOR . "LRR_Masterpiece_Editon_Executable_no_DRM";
         echo "adding DRM-free files: \"{$drm_free_dir}\" to \"{$build_dir}\"\n";
         copyRecursive($drm_free_dir, $build_dir, true);
     }
     private function add_music_fix(): void
     {
         $build_dir = $this->build_dir;
-        $musc_fix_dir = $this->assert_dir . DIRECTORY_SEPARATOR . "LRR_music_fix_v1_1";
+        $musc_fix_dir = $this->asset_dir . DIRECTORY_SEPARATOR . "LRR_music_fix_v1_1";
         echo "adding music fix: \"{$musc_fix_dir}\" to \"{$build_dir}\"\n";
         copyRecursive($musc_fix_dir, $build_dir, true);
     }
     private function add_dgvoodoo(): void
     {
         $build_dir = $this->build_dir;
-        $dgvoodoo_dir = $this->assert_dir . DIRECTORY_SEPARATOR . "dgVoodoo2_79_1";
+        $dgvoodoo_dir = $this->asset_dir . DIRECTORY_SEPARATOR . "dgVoodoo2_79_1";
         $tmp = $dgvoodoo_dir . DIRECTORY_SEPARATOR . "MS" . DIRECTORY_SEPARATOR . "x86";
         echo "adding dgVoodoo: \"{$tmp}\" to \"{$build_dir}\"\n";
         copyRecursive($tmp, $build_dir, true);
@@ -231,14 +231,14 @@ class LegoRRCompiler
     private function add_llrce(): void
     {
         $build_dir = $this->build_dir;
-        $lrr_ce_dir = $this->assert_dir . DIRECTORY_SEPARATOR . "LLRCE_v1.0.3.1";
+        $lrr_ce_dir = $this->asset_dir . DIRECTORY_SEPARATOR . "LLRCE_v1.0.3.1";
         echo "adding LLRCE: \"{$lrr_ce_dir}\" to \"{$build_dir}\"\n";
         copyRecursive($lrr_ce_dir, $build_dir, true);
     }
     private function add_mod_manager_cafeteria(): void
     {
         $build_dir = $this->build_dir;
-        $mm_cafeteria_dir = $this->assert_dir . DIRECTORY_SEPARATOR . "mod_manager_Cafeteria_v1.0BETA7";
+        $mm_cafeteria_dir = $this->asset_dir . DIRECTORY_SEPARATOR . "mod_manager_Cafeteria_v1.0BETA7";
         echo "adding Mod_Manager_Cafeteria: \"{$mm_cafeteria_dir}\" to \"{$build_dir}\"\n";
         copyRecursive($mm_cafeteria_dir, $build_dir, true);
     }
