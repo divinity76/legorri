@@ -129,10 +129,10 @@ class LegoRRCompiler
             "C:\\Program Files (x86)\\7-Zip\\7z64.exe",
             "/usr/bin/7z",
         );
-        $exec7z = null;
-        foreach ($exe7zSearch as $exe7z) {
-            if (file_exists($exe7z)) {
-                $exe7z = $exe7z;
+        $exe7z = null;
+        foreach ($exe7zSearch as $exe7zTest) {
+            if (file_exists($exe7zTest)) {
+                $exe7z = $exe7zTest;
                 break;
             }
         }
